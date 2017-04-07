@@ -1,0 +1,168 @@
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId])
+/******/ 			return installedModules[moduleId].exports;
+/******/
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// identity function for calling harmony imports with the correct context
+/******/ 	__webpack_require__.i = function(value) { return value; };
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, {
+/******/ 				configurable: false,
+/******/ 				enumerable: true,
+/******/ 				get: getter
+/******/ 			});
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ (function(module, exports) {
+
+var canvas,
+    ctx,
+    width = 600,
+    height = 600,
+    ship_x = (width / 2) - 25, ship_y = height - 75, ship_w = 50, ship_h = 50,
+    rightKey = false,
+    leftKey = false,
+    upKey = false,
+    downKey = false,
+    enemyTotal = 5,
+    enemies = [],
+    enemy_x = 50,
+    enemy_y = -45,
+    enemy_w = 50,
+    enemy_h = 50,
+    speed = 3,
+    enemy,
+    ship;
+
+    for (var i = 0; i < enemyTotal; i++) {
+      enemies.push([enemy_x, enemy_y, enemy_w, enemy_h, speed]);
+      enemy_x += enemy_w + 60;
+    }
+
+    function clearCanvas() {
+      ctx.clearRect(0,0,width,height);
+    }
+
+    function init() {
+      canvas = document.getElementById('canvas');
+      ctx = canvas.getContext('2d');
+      enemy = new Image();
+      enemy.src = '8bit_enemy.png';
+      ship = new Image();
+      ship.src = 'ship.png';
+
+      setInterval(gameLoop, 25);
+      document.addEventListener('keydown', keyDown, false);
+      document.addEventListener('keyup', keyUp, false);
+    }
+
+    function keyDown(e) {
+      if (e.keyCode == 39) rightKey = true;
+      else if (e.keyCode == 37) leftKey = true;
+      if (e.keyCode == 38) upKey = true;
+      else if (e.keyCode == 40) downKey = true;
+    }
+
+    function keyUp(e) {
+      if (e.keyCode == 39) rightKey = false;
+      else if (e.keyCode == 37) leftKey = false;
+      if (e.keyCode == 38) upKey = false;
+      else if (e.keyCode == 40) downKey = false;
+    }
+
+    function drawShip() {
+      if (rightKey) ship_x += 5;
+      else if (leftKey) ship_x -= 5;
+      if (upKey) ship_y -= 5;
+      else if (downKey) ship_y += 5;
+      if (ship_x <= 0) ship_x = 0;
+      if ((ship_x + ship_w) >= width) ship_x = width - ship_w;
+      if (ship_y <= 0) ship_y = 0;
+      if ((ship_y + ship_h) >= height) ship_y = height - ship_h;
+      ctx.drawImage(ship, ship_x, ship_y);
+    }
+
+    function drawEnemies() {
+      for (var i = 0; i < enemies.length; i++) {
+        ctx.drawImage(enemy, enemies[i][0], enemies[i][1]);
+      }
+    }
+
+    function moveEnemies() {
+      for (var i = 0; i < enemies.length; i++) {
+        if (enemies[i][1] < height) {
+          enemies[i][1] += enemies[i][4];
+        } else if (enemies[i][1] > height - 1) {
+          enemies[i][1] = -45;
+        }
+      }
+    }
+
+    function gameLoop() {
+      clearCanvas();
+      moveEnemies();
+      drawEnemies();
+      drawShip();
+    }
+
+
+window.onload = init;
+
+/***/ })
+/******/ ]);
+//# sourceMappingURL=bundle.js.map
