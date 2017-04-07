@@ -87,7 +87,9 @@ var canvas,
     enemy_h = 50,
     speed = 3,
     enemy,
-    ship;
+    ship,
+    laserTotal = 2,
+    lasers = [];
 
     for (var i = 0; i < enemyTotal; i++) {
       enemies.push([enemy_x, enemy_y, enemy_w, enemy_h, speed]);
@@ -116,6 +118,7 @@ var canvas,
       else if (e.keyCode == 37) leftKey = true;
       if (e.keyCode == 38) upKey = true;
       else if (e.keyCode == 40) downKey = true;
+      if (e.keyCode == 88 && lasers.length <= laserTotal) lasers.push([ship_x + 25, ship_y - 20, 4, 20]);
     }
 
     function keyUp(e) {
@@ -143,6 +146,14 @@ var canvas,
       }
     }
 
+    function drawLaser() {
+      if (lasers.length)
+        for (var i = 0; i < lasers.length; i++) {
+          ctx.fillStyle = '#f00';
+          ctx.fillRect(lasers[i][0],lasers[i][1],lasers[i][2],lasers[i][3])
+        }
+    }
+
     function moveEnemies() {
       for (var i = 0; i < enemies.length; i++) {
         if (enemies[i][1] < height) {
@@ -153,11 +164,23 @@ var canvas,
       }
     }
 
+    function moveLaser() {
+      for (var i = 0; i < lasers.length; i++) {
+        if (lasers[i][1] > -11) {
+          lasers[i][1] -= 10;
+        } else if (lasers[i][1] < -10) {
+          lasers.splice(i, 1);
+        }
+      }
+    }
+
     function gameLoop() {
       clearCanvas();
       moveEnemies();
+      moveLaser();
       drawEnemies();
       drawShip();
+      drawLaser();
     }
 
 
