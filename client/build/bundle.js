@@ -89,7 +89,9 @@ var canvas,
     enemy,
     ship,
     laserTotal = 2,
-    lasers = [];
+    lasers = [],
+    score = 0,
+    alive = true;
 
     for (var i = 0; i < enemyTotal; i++) {
       enemies.push([enemy_x, enemy_y, enemy_w, enemy_h, speed]);
@@ -102,15 +104,16 @@ var canvas,
 
     function init() {
       canvas = document.getElementById('canvas');
+      console.log("canvas object at init", canvas);
       ctx = canvas.getContext('2d');
+      console.log("ctx object at init");
       enemy = new Image();
       enemy.src = 'red_enemy_ship.png';
       ship = new Image();
       ship.src = '8_bit_ship_sprite.png';
-
-      setInterval(gameLoop, 25);
       document.addEventListener('keydown', keyDown, false);
       document.addEventListener('keyup', keyUp, false);
+      gameLoop();
     }
 
     function keyDown(e) {
@@ -181,6 +184,7 @@ var canvas,
           if (lasers[i][1] <= (enemies[j][1] + enemies[j][3]) && lasers[i][0] >= enemies[j][0] && lasers[i][0] <= (enemies[j][0] + enemies[j][2])) {
             remove = true;
             enemies.splice(j, 1);
+            score += 10;
           }
         }
         if (remove == true) {
@@ -190,14 +194,54 @@ var canvas,
       }
     }
 
+    function shipCollision() {
+      var ship_xw = ship_x + ship_w,
+          ship_yh = ship_y + ship_h;
+      for (var i = 0; i < enemies.length; i++) {
+
+          if (ship_x > enemies[i][0] && ship_x < enemies[i][0] + enemy_w && ship_y > enemies[i][1] && ship_y < enemies[i][1] + enemy_h) {
+            alive = false;
+
+          }
+          if (ship_xw < enemies[i][0] + enemy_w && ship_xw > enemies[i][0] && ship_y > enemies[i][1] && ship_y < enemies[i][1] + enemy_h) {
+            alive = false;
+
+          }
+          if (ship_yh > enemies[i][1] && ship_yh < enemies[i][1] + enemy_h && ship_x > enemies[i][0] && ship_x < enemies[i][0] + enemy_w) {
+            alive = false;
+
+          }
+          if (ship_yh > enemies[i][1] && ship_yh < enemies[i][1] + enemy_h && ship_xw < enemies[i][0] + enemy_w && ship_xw > enemies[i][0]) {
+            alive = false;
+
+          }
+        }
+      }
+    
+
+    function scoreTotal() {
+      ctx.font = 'bold 18px Arial';
+      ctx.fillStyle = '#fff';
+      ctx.fillText('Score: ', 490, 30);
+      ctx.fillText(score, 550, 30);
+      if (!alive) {
+        ctx.fillText('Game Over!', 245, height / 2);
+      }
+    }
+
     function gameLoop() {
       clearCanvas();
+      if(alive){
       hitTest();
+      shipCollision();
       moveEnemies();
       moveLaser();
       drawEnemies();
       drawShip();
       drawLaser();
+     }
+     scoreTotal();
+     game = setTimeout(gameLoop, 1000 / 30);
     }
 
 
