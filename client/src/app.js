@@ -32,9 +32,9 @@ var canvas,
       canvas = document.getElementById('canvas');
       ctx = canvas.getContext('2d');
       enemy = new Image();
-      enemy.src = '8bit_enemy.png';
+      enemy.src = 'red_enemy_ship.png';
       ship = new Image();
-      ship.src = 'ship.png';
+      ship.src = '8_bit_ship_sprite.png';
 
       setInterval(gameLoop, 25);
       document.addEventListener('keydown', keyDown, false);
@@ -102,8 +102,25 @@ var canvas,
       }
     }
 
+    function hitTest() {
+      var remove = false;
+      for (var i = 0; i < lasers.length; i++) {
+        for (var j = 0; j < enemies.length; j++) {
+          if (lasers[i][1] <= (enemies[j][1] + enemies[j][3]) && lasers[i][0] >= enemies[j][0] && lasers[i][0] <= (enemies[j][0] + enemies[j][2])) {
+            remove = true;
+            enemies.splice(j, 1);
+          }
+        }
+        if (remove == true) {
+          lasers.splice(i, 1);
+          remove = false;
+        }
+      }
+    }
+
     function gameLoop() {
       clearCanvas();
+      hitTest();
       moveEnemies();
       moveLaser();
       drawEnemies();
